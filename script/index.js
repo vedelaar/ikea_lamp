@@ -1,5 +1,5 @@
 const mqtt = require('mqtt')
-const client  = mqtt.connect('mqtt://192.168.2.11')
+const client  = mqtt.connect('mqtt://mosquitto')
 
 const topicname = "zigbee2mqtt"
 
@@ -53,6 +53,9 @@ async function handleLamp(msg) {
 
   if (msg.payload === null) {
       obj.payload.state = "OFF";
+  }
+  else if ( msg.payload_in.action === null ) {
+    return null;
   }
   else if( msg.payload_in.action == "toggle") {
       if (msg.payload.state == "ON")
@@ -115,7 +118,9 @@ client.on('message', async function (topic, message) {
       let msg = {payload_in: JSON.parse(message.toString()), payload: JSON.parse(state.toString())};
       let ret = await handleLamp(msg);
       console.log(ret);
-      client.publish(topicname+"/"+dev_lamp+"/set", JSON.stringify(ret.payload));
+      if (ret !== null) {
+        client.publish(topicname+"/"+dev_lamp+"/set", JSON.stringify(ret.payload));
+      }
     } catch (err) {
       console.log(err);
     }
