@@ -1,0 +1,90 @@
+version: '3.3'
+services:
+  script:
+    image: "node:16"
+    user: "node"
+    container_name: script
+    restart: unless-stopped
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./script/:/home/node/app
+    command: "npm start"
+    depends_on:
+      - mosquitto
+
+  zigbee2mqtt:
+    restart: unless-stopped
+    container_name: zigbee2mqtt
+    image: koenkk/zigbee2mqtt
+    depends_on:
+      - mosquitto
+    volumes:
+      - ./zigbee2mqtt:/app/data
+      - /run/udev:/run/udev:ro
+    ports:
+      # Frontend port
+      - 8080:8080
+    environment:
+      - TZ=Europe/Berlin
+#      - DEBUG=zigbee-herdsman*
+    devices:
+      - /dev/ttyACM0:/dev/ttyACM0
+
+  mosquitto:
+    restart: unless-stopped
+    image: eclipse-mosquitto
+    hostname: mosquitto
+    container_name: mosquitto
+#    volumes:
+#      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    volumes:
+      - ./mosquitto/:/mosquitto/:rw
+    ports:
+      - 1883:1883
+      - 9001:9001
+
+  node-red:
+    restart: unless-stopped
+    image: nodered/node-red:latest
+    container_name: node-red
+    environment:
+      - TZ=Europe/Amsterdam
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./node-red:/data
+
+        #  homeassistant:
+        #    restart: unless-stopped
+        #    container_name: homeassistant
+        #    image: "ghcr.io/home-assistant/home-assistant:stable"
+        #    volumes:
+        #      - ./homeassistant/config:/config
+        #      - /etc/localtime:/etc/localtime:ro
+        #    privileged: true
+        #    ports:
+        #      - 8123:8123
+
+#  hassio:
+#    #image: homeassistant/armv7-hassio-supervisor
+#    image: homeassistant/amd64-hassio-supervisor
+#    container_name: hassio_supervisor
+#    privileged: true
+#    security_opt:
+#      - seccomp:unconfined
+#      - apparmor:unconfined
+#    environment:
+#      - HOMEASSISTANT_REPOSITORY=homeassistant/raspberrypi4-homeassistant
+#      - SUPERVISOR_NAME=hassio_supervisor
+#      - SUPERVISOR_SHARE=/home/pi/hassio/data
+#      - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/var/run/dbus/system_bus_socket
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
+#      - ./hassio/data:/data
+#      - ./hassio/scripts:/scripts
+#      - /var/run/docker.sock:/var/run/docker.sock
+#      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
+
+

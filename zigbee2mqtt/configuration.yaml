@@ -1,0 +1,30 @@
+homeassistant: false
+permit_join: false
+#advanced:
+#    log_level: debug
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://mosquitto
+frontend:
+  port: 8080
+serial:
+  port: /dev/ttyACM0
+  adapter: auto
+  disable_led: false
+devices:
+  '0x0c4314fffe1c52b4':
+    friendly_name: AanUitKnop
+    retain: true
+    legacy: false
+  '0x0c4314fffe4db20b':
+    friendly_name: Lamp
+    retain: true
+  '0x84fd27fffe2a6213':
+    friendly_name: Remote
+    retain: true
+    legacy: false
+  '0x2c1165fffee44f89':
+    friendly_name: KleurenLamp
+  '0xec1bbdfffe397120':
+    friendly_name: Dimmer
+    legacy: false
