@@ -1,4 +1,4 @@
-Files I use to have the IKEA SYMFONISK as a dimmer for an IKEA TRÅDFRI led-lamp.
+Files I use to have the IKEA SYMFONISK sound remote as a dimmer for an IKEA TRÅDFRI led-lamp.
 
 Rotate to dim the light. Single press to turn on/off, double press to turn on with dimmest setting, triple press to turn the light on with the brightest setting.
 
